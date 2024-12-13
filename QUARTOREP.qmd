@@ -140,7 +140,7 @@ Fig 1a shows two histograms, which depict the frequency data of beak depths for 
 
 Fig 1b shows a box plot, which depicts the range of values for beak depths in both years. We can see the outliers (dots), the range (whiskers) and Quartiles (Qs) 1, 2 and 3 illustrated by the bounds of the box. Box plots are useful because they are compact, and easy to interpret [@tufte2001a]. Our box plot shows less lower-bounded outliers in 1978, as well as smaller range, and an increase in Qs 1, 2 and 3 between 1976 and 1978. This is further indication of an increase in beak depth, after the 1977 drought event.
 
-For reproducibility, it is important that the figures as I have generated them under this current investigation are saved and kept, for maximum transparency [@schwab2022]. They can be found in the "figures" folder of my Reproducible Figures Project, and in my GitHub repository, here: I give the code for my figure-saving function, which itself is also saved in the "functions" folder of my Reproducible Figures Project and GitHub Repository, below:
+For reproducibility, it is important that the figures as I have generated them under this current investigation are saved and kept, for maximum transparency [@schwab2022]. They can be found in the "figures" folder of my Reproducible Figures Project, and in my GitHub repository, here: I give the code for my figure-saving function, which itself is also saved in the "functions" folder of my Reproducible Figures Project and [GitHub Repository](https://github.com/daisyjeans/QUARTOREP "click"), below:
 
 ```{r}
 #| echo: true
@@ -217,7 +217,7 @@ resultsfigure <- ggplot(finchData, aes(x = Year, y = Depth)) +
 
 Notably, the confidence intervals (the range for which the Depth estimate meets the "true" Depth value, with 95% confidence) do not overlap. Taken together, the highly statistically significant increase in Beak Depth would indicate that the Medium ground finches have undergone natural selection. Hence, we reject H~0~. [@svensson2023]
 
-It is once again important, in order to ensure maximum reproducibility, that there is a saved copy of my Figure 2 [@schwab2022a]. I save it to the "figures" folder of my QUARTOREP Project using the following code. It can also be found in my \[...\]
+It is once again important, in order to ensure maximum reproducibility, that there is a saved copy of my Figure 2 [@schwab2022a]. I save it to the "figures" folder of my QUARTOREP Project using the following code. It can also be found in my [GitHub Repository](https://github.com/daisyjeans/QUARTOREP "click again").
 
 ```{r}
 #| echo: true
