@@ -108,6 +108,12 @@ histogram <- ggplot(finchData, aes(x = Depth, fill = Year)) + #loading data and 
 
 #next, creating the boxplot
 
+#set a seed for reproducibility 
+
+set.seed(296)
+
+#then assign the plot
+
 boxplot <- ggplot(finchData, aes(x = Year, y = Depth, fill = Year)) +
   geom_boxplot() +
   scale_fill_viridis(discrete = TRUE, alpha = 0.75) +  
