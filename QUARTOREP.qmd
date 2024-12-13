@@ -17,9 +17,11 @@ Do medium ground finches (*Geospiza fortis*) of Daphne Major (Galapagos) undergo
 
 #### **Hypotheses:**
 
-Null hypothesis (H~0~): Medium ground finch beak depth [does not change]{.underline} after drought stress.
+This being an ecological study, my hypotheses are at the population-level. They refer to changes in beak depth [across generations]{.underline}.
 
-Alternative hypothesis (H~1~): Medium ground finch beak depth [increases]{.underline} after drought stress. [^1]
+**Null hypothesis (H~0~):** Medium ground finch beak depth [does not change]{.underline} after drought stress.
+
+**Alternative hypothesis (H~1~):** Medium ground finch beak depth [increases]{.underline} after drought stress. [^1]
 
 [^1]: A one-sided hypothesis was chosen because, hypothetically, finches with [larger]{.underline} beaks could open the only drought-surviving seeds, which would be highly tough. This would make them more likely to survive, and pass on this advantageous trait to their offspring.
 
@@ -140,7 +142,7 @@ Fig 1a shows two histograms, which depict the frequency data of beak depths for 
 
 Fig 1b shows a box plot, which depicts the range of values for beak depths in both years. We can see the outliers (dots), the range (whiskers) and Quartiles (Qs) 1, 2 and 3 illustrated by the bounds of the box. Box plots are useful because they are compact, and easy to interpret [@tufte2001a]. Our box plot shows less lower-bounded outliers in 1978, as well as smaller range, and an increase in Qs 1, 2 and 3 between 1976 and 1978. This is further indication of an increase in beak depth, after the 1977 drought event.
 
-For reproducibility, it is important that the figures as I have generated them under this current investigation are saved and kept, for maximum transparency [@schwab2022]. They can be found in the "figures" folder of my Reproducible Figures Project, and in my GitHub repository, here: I give the code for my figure-saving function, which itself is also saved in the "functions" folder of my Reproducible Figures Project and [GitHub Repository](https://github.com/daisyjeans/QUARTOREP "click"), below:
+For reproducibility, it is important that my figures are saved, for maximum transparency [@schwab2022]. They can be found in the "figures" folder of my QUARTOREP Project, and in my GitHub repository, here: [GitHub Repository](https://github.com/daisyjeans/QUARTOREP "click"). I give the code for my figure-saving function, which itself is also saved in the "functions" folder of my QUARTOREP Project and GitHub Repository, below:
 
 ```{r}
 #| echo: true
@@ -148,7 +150,7 @@ For reproducibility, it is important that the figures as I have generated them u
 #| warning: false
 #| label: saving exploratory figure
 
-## In order to save this figure, I create another function, available in the "functions" folder of my Project, and in my GitHub Repository: 
+## In order to save my figure, I have created a function, available in the "functions" folder of my Project, and in my GitHub Repository: 
 
 source(here("functions", "saving_figures.R"))
 
@@ -184,11 +186,11 @@ model_summary <- data.frame(
 kable(model_summary, caption = "Simple Linear Regression Analysis Summary Table")
 ```
 
-From this output table of my simple linear model, we can see that Beak Depth increased by 0.6685400 between 1976 and 1978.
+From this output table of my simple linear model, we can see that Beak Depth increased by 0.6685400mm between 1976 and 1978.
 
 Our H~0~ assumes that there is no change in Beak Depth from 1976 to 1978. We would fail to reject H~0~ if the inbuilt t-test, which compares Beak Depths between the two years and derives a t-statistic with an associated p-value, was non-significant. However, our t-test returns a highly significant associated p-value of 0.0000086. This is much lower than the traditional alpha threshold of 0.05. As such, we reject H~0~.
 
-Notably however, the R^2^ output of this linear regression analysis = 0.1066300. This means that the Year can explain only 10.7% of the variability in Beak Depth. This implies that other factors; be they physiological, ecological, environmental or genetic, are affecting the change in beak depth, too.
+Notably however, the R^2^ output of this linear regression analysis = 0.1066300. This means that the Year can explain only approximately 10.7% of the variability in Beak Depth. This implies that other factors; be they physiological, ecological, environmental or genetic, are affecting the change in beak depth, too.
 
 To more easily interpret of these findings, I built them into a [simple linear regression analysis]{.underline} plot.
 
@@ -201,7 +203,7 @@ To more easily interpret of these findings, I built them into a [simple linear r
 finchData$Year <- as.numeric(finchData$Year) #for linear regression, we must now treat "year" as numerical 
 resultsfigure <- ggplot(finchData, aes(x = Year, y = Depth)) + 
   geom_point() + #generates a scatter plot
-  geom_smooth(method = "lm", se = TRUE, color = "purple") +  #adding the linear regression with standard errors to the scatter plot
+  geom_smooth(method = "lm", se = TRUE, color = "purple") +  #adding the linear regression with 95% CIs to the scatter plot
   labs(title = "(Fig 2) | Simple Linear Model of Medium Ground Finch Beak Depth Before + After Drought",
        x = "Year",
        y = "Beak Depth (mm)"
@@ -262,8 +264,8 @@ Finally, the bottom-right plot shows the Constant Leverage plot. This shows the 
 
 To conclude, the Grant dataset provides an important opportunity for the study of evolution, by the mechanism of natural selection.
 
-Simple regression analysis reveals that medium ground finches (*Geospiza fortis*) of Daphne Major (Galapagos) experience increased beak depth in response to food availability, due to drought. Despite linear regression only showing a correlation, and not providing conclusive proof of causation, we have strong statistical evidence to reject H~0~.
+Simple regression analysis reveals that medium ground finches (*Geospiza fortis*) of Daphne Major (Galapagos) experience increased beak depth in response to food (un)availability, due to drought. Despite linear regression only showing a correlation, and not providing conclusive proof of causation, we have strong statistical evidence to reject H~0~. Corroborating data could be sourced from longitudinal studies or historical drought data, that assess changes in phenotype arising from drought conditions. Causative evidence would require intervention studies that simulated drought conditions for a treatment group and measured their phenotype across generations - although this might raise ethical challenges.
 
-This is important because it hints at the selective forces which can enforce evolutionary change: here, drought. It is essential to consider both the potential incidence, and the nature, of the evolutionary effects that anthropogenic environmental changes (such as more frequent droughts) might impose upon species in our current (proposed) Anthropocene.
+This study is important because it hints at the selective forces which can enforce evolutionary change: here, drought. It is essential to consider both the potential incidence, and the nature, of the evolutionary effects that anthropogenic environmental changes (such as more frequent droughts) might impose upon species in our current (proposed) Anthropocene.
 
 Further studies elucidating the genomics that underpin such evolutionary changes, such as that conducted by [@sangeet2016] are promising. Discovering the linked loci that have undergone natural selection, producing adaptive phenotypes (such as the *HMGA2* gene in this case), will facilitate greater understanding of the proximate and ultimate causes of evolution by natural selection. Only with the appropriate foresight to predict these changes, facilitated by research efforts such as the Grants', can we ensure species conservation.
