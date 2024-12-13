@@ -13,6 +13,8 @@ bibliography: references.bib
 
 Do medium ground finches (*Geospiza fortis*) of Daphne Major (Galapagos) undergo natural selection of beak depth in response to food availability, due to drought?
 
+![Medium ground finch perching](images/Medium%20Ground%20Finch.jpeg){fig-alt="Medium ground finch perching" fig-align="center"}
+
 #### **Hypotheses:**
 
 Null hypothesis (H~0~): Medium ground finch beak depth [does not change]{.underline} after drought stress.
@@ -60,11 +62,14 @@ renv::restore()
 library(broom)
 library(ggplot2)
 library(gridExtra)
+library(here)
 library(hrbrthemes)
 library(knitr)
+library(ragg)
 library(rmarkdown)
 library(SemiPar)
 library(Sleuth3)
+library(svglite)
 library(tidyverse)
 library(viridis)
 
@@ -135,6 +140,28 @@ Fig 1a shows two histograms, which depict the frequency data of beak depths for 
 
 Fig 1b shows a box plot, which depicts the range of values for beak depths in both years. We can see the outliers (dots), the range (whiskers) and Quartiles (Qs) 1, 2 and 3 illustrated by the bounds of the box. Box plots are useful because they are compact, and easy to interpret [@tufte2001a]. Our box plot shows less lower-bounded outliers in 1978, as well as smaller range, and an increase in Qs 1, 2 and 3 between 1976 and 1978. This is further indication of an increase in beak depth, after the 1977 drought event.
 
+For reproducibility, it is important that the figures as I have generated them under this current investigation are saved and kept, for maximum transparency [@schwab2022]. They can be found in the "figures" folder of my Reproducible Figures Project, and in my GitHub repository, here: I give the code for my figure-saving function, which itself is also saved in the "functions" folder of my Reproducible Figures Project and GitHub Repository, below:
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+#| label: saving exploratory figure
+
+## In order to save this figure, I create another function, available in the "functions" folder of my Project, and in my GitHub Repository: 
+
+source(here("functions", "saving_figures.R"))
+
+## Then call this function with regard to the exploratory figure:
+
+save_figure_png(histogram,
+                here("figures", "Figure1_histogram.png"), 
+                size = 50, res = 500, scaling = 2)
+save_figure_png(boxplot,
+                here("figures", "Figure1_boxplot.png"), 
+                size = 50, res = 500, scaling = 2)
+```
+
 After appreciating the raw data, it is necessary to conduct formal analysis. As such, having built my simple linear model, I conducted a [linear regression analysis]{.underline}, with the following output:
 
 ```{r}
@@ -172,7 +199,7 @@ To more easily interpret of these findings, I built them into a [simple linear r
 #| label: regression
 #| fig-cap: "Linear Regression Analysis of my Simple Linear Model. The x-axis represents Year, and the y-axis represents Beak Depth (mm). The linear regression is shown in purple, with 95% CIs shown in grey. Slope and p-value are cited in the top right hand corner."
 finchData$Year <- as.numeric(finchData$Year) #for linear regression, we must now treat "year" as numerical 
-ggplot(finchData, aes(x = Year, y = Depth)) + 
+resultsfigure <- ggplot(finchData, aes(x = Year, y = Depth)) + 
   geom_point() + #generates a scatter plot
   geom_smooth(method = "lm", se = TRUE, color = "purple") +  #adding the linear regression with standard errors to the scatter plot
   labs(title = "(Fig 2) | Simple Linear Model of Medium Ground Finch Beak Depth Before + After Drought",
@@ -189,6 +216,21 @@ ggplot(finchData, aes(x = Year, y = Depth)) +
 ```
 
 Notably, the confidence intervals (the range for which the Depth estimate meets the "true" Depth value, with 95% confidence) do not overlap. Taken together, the highly statistically significant increase in Beak Depth would indicate that the Medium ground finches have undergone natural selection. Hence, we reject H~0~. [@svensson2023]
+
+It is once again important, in order to ensure maximum reproducibility, that there is a saved copy of my Figure 2 [@schwab2022a]. I save it to the "figures" folder of my QUARTOREP Project using the following code. It can also be found in my \[...\]
+
+```{r}
+#| echo: true
+#| message: false
+#| warning: false
+#| label: saving results figure
+
+## I reuse my function to save my results figure: 
+
+save_figure_png(resultsfigure,
+                here("figures", "Figure2_linear_regression.png"), 
+                size = 30, res = 100, scaling = 1)
+```
 
 ::: callout-important
 ## Simple Linear Models make assumptions that must be verified.
