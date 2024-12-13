@@ -1,0 +1,227 @@
+---
+title: "Dynamic and Reproducible Science in Quarto"
+format: html
+editor: visual
+fig-width: 10
+fig-height: 9.35
+bibliography: references.bib
+---
+
+# Introduction
+
+#### **My question:**
+
+Do medium ground finches (*Geospiza fortis*) of Daphne Major (Galapagos) undergo natural selection of beak depth in response to food availability, due to drought?
+
+#### **Hypotheses:**
+
+Null hypothesis (H~0~): Medium ground finch beak depth [does not change]{.underline} after drought stress.
+
+Alternative hypothesis (H~1~): Medium ground finch beak depth [increases]{.underline} after drought stress. [^1]
+
+[^1]: A one-sided hypothesis was chosen because, hypothetically, finches with [larger]{.underline} beaks could open the only drought-surviving seeds, which would be highly tough. This would make them more likely to survive, and pass on this advantageous trait to their offspring.
+
+In order to test these hypotheses, I will conduct a simple linear model analysis of finch beak depth data (measured as the depth at the base of the beak, in mm) in the years before and after a severe drought -- occurring in 1977. If the data show a significant increase in beak depth, we can conclude that natural selection has occurred. [@fowler2013]
+
+# Methods - Statistical Analysis
+
+The Grant dataset includes more than 20 generations of Medium ground finch beak depth data. Its format includes 178 observations on the following 2 variables: Year (1976 and 1978), and Beak Depth (mm).
+
+I have chosen to build a [simple linear model]{.underline} to assess whether these finches undergo natural selection of beak depth in response to food availability. Simple linear models show the dependence of a regression target (here, Beak Depth) on Year.
+
+The simple linear model assumes that y can be expressed by a weighted sum of its (p) features with an individual error (epsilon):
+
+$y = \beta_0 + \beta_1x_1 + ... + \beta_px_p + \epsilon$
+
+In order to analyse the outputs of this simple linear model, I have chosen to conduct [linear regression analysis]{.underline}.
+
+::: callout-tip
+## Simple linear models are easy to interpret, can be annotated with 95% confidence intervals, and their assumptions can be rigorously tested. 
+:::
+
+[@hastie2017]
+
+# Results
+
+Initially, I built a multi-panel figure in order to investigate the covariation within the raw data, between Beak Depth (mm) and Year.
+
+[@wickham2023]
+
+```{r}
+#| echo: true
+#| warning: false
+#| message: false
+#| label: multi-panel descriptive
+#| fig-cap: "Multi-panel figure describing the raw data. 1976 = purple. 1978 = yellow. | Fig 1a shows two histograms. The x-axis represents Beak Depth (measured in mm), and the y-axis represents Frequency for that year. Frequency polygons are illustrated in red (1976) and blue (1978). | Fig 1b shows a box plot. The x-axis represents the Year, and the y-axis represents the Beak Depth (mm). Grey dots illustrate the raw data points."
+
+renv::restore()
+## load the packages 
+
+library(broom)
+library(ggplot2)
+library(gridExtra)
+library(hrbrthemes)
+library(knitr)
+library(rmarkdown)
+library(SemiPar)
+library(Sleuth3)
+library(tidyverse)
+library(viridis)
+
+##assign the data 
+
+finchData <- case0201 
+
+## set "Year" as a factor 
+finchData$Year <- factor(finchData$Year)
+
+## building a multi-panel exploratory plot
+#start with histogram 
+
+histogram <- ggplot(finchData, aes(x = Depth, fill = Year)) + #loading data and setting axis
+  geom_histogram(binwidth = 1, color = "darkgrey", alpha = 0.75) + #histogram aesthetics 
+  geom_freqpoly(aes(color = Year), binwidth = 1, linewidth = 1) +  #frequency polygon aesthetics
+  scale_fill_viridis(discrete = TRUE, alpha = 0.75) +  #colour-blind friendly palette
+  facet_wrap(~ Year, scales = "free_y") +  #setting up individual plots for interpretability
+  labs(x = "Beak Depth (mm)", #x-axis + appropriate units 
+       y = "Frequency") + #y-axis (does not require units)
+  theme_minimal() + #an appropriate theme for publication-quality figures 
+  theme( #fine-tuning aesthetic elements of the graph, for publication-quality
+    legend.position = "right", 
+    plot.title = element_text(hjust = 0.5, vjust = 0, size =15, face = "bold", family = "Times New Roman"),
+    axis.title.x = element_text(hjust = 0.5, size = 12, family = "Times New Roman"),
+    axis.title.y = element_text(hjust = 0.5, size = 12, family = "Times New Roman"),
+    axis.text.x = element_text(size = 9, family = "Times New Roman"),
+    axis.text.y = element_text(size = 9, family = "Times New Roman"),
+    legend.key.size = unit(0.75, "cm"),
+    legend.title = element_text(size = 11.5, family = "Times New Roman"),
+    legend.text = element_text(size = 8, family = "Times New Roman"),
+    strip.text = element_text(size = 10, family = "Times New Roman")
+  ) 
+
+#next, creating the boxplot
+
+boxplot <- ggplot(finchData, aes(x = Year, y = Depth, fill = Year)) +
+  geom_boxplot() +
+  scale_fill_viridis(discrete = TRUE, alpha = 0.75) +  
+  geom_jitter(color = "darkgrey", size = 2, alpha = 0.75) + #adding jitter to show raw data, as is appropriate for an exploratory figure 
+  theme_ipsum() + #another appropriate theme for publication-quality figures 
+  theme( #more modifications to enhance readability 
+    legend.position = "right",
+    plot.title = element_text(hjust = 0.5, vjust = 7.5, size = 15, face = "bold", family = "Times New Roman"),
+    axis.title.x = element_text(hjust = 0.5, size = 12, family = "Times New Roman"),
+    axis.title.y = element_text(hjust = 0.5, size = 12, family = "Times New Roman"),
+    axis.text.x = element_text(size = 9, family = "Times New Roman"),
+    axis.text.y = element_text(size = 9, family = "Times New Roman"),
+    legend.key.size = unit(1.5, "cm"),
+    legend.title = element_text(size = 11.5, family = "Times New Roman"),
+    legend.text = element_text(size = 8, family = "Times New Roman")
+  ) +
+  xlab("Year") + #x-axis label (does not require units) 
+  ylab("Depth (mm)") #y-axis label + appropriate units 
+
+#next, combining both plots into a multi-panel figure 
+
+grid.arrange(
+  histogram + 
+    ggtitle("(Fig 1a) | Frequency Distributions of Beak Depths Before and After Drought"),
+  boxplot + 
+    ggtitle("(Fig 1b) | Ranges of Beak Depths Before and After Drought"),
+  nrow = 2
+) #figure titles enhance the ease of which to reference body text to figures
+```
+
+Fig 1a shows two histograms, which depict the frequency data of beak depths for both 1976 (before drought), and 1979 (after drought). Histograms are useful for illustrating trends in data [@tufte2001]. Overlayed onto the histograms are frequency polygons, connecting the midpoints of each bin to illustrate the overall distribution of the data. In 1976, the purple histogram appears to have a right-skewed distribution, when compared to 1978 (the yellow histogram). This is further exemplified by the red frequency polygon for 1976 having a greater right-skew than the blue frequency polygon for 1978. As such, the raw data gives an indication of an increase in Beak Depth, between the two years.
+
+Fig 1b shows a box plot, which depicts the range of values for beak depths in both years. We can see the outliers (dots), the range (whiskers) and Quartiles (Qs) 1, 2 and 3 illustrated by the bounds of the box. Box plots are useful because they are compact, and easy to interpret [@tufte2001a]. Our box plot shows less lower-bounded outliers in 1978, as well as smaller range, and an increase in Qs 1, 2 and 3 between 1976 and 1978. This is further indication of an increase in beak depth, after the 1977 drought event.
+
+After appreciating the raw data, it is necessary to conduct formal analysis. As such, having built my simple linear model, I conducted a [linear regression analysis]{.underline}, with the following output:
+
+```{r}
+#| echo: true
+#| warning: false
+#| message: false
+#| label: simplemodel
+simplemodel <- lm(Depth ~ Year, data = finchData) #assinging a simple linear regression model of depth against year for the finch dataset
+slope <- signif(simplemodel$coef[[2]], 5) #assinging the slope value, for later extraction, for ease of visibility 
+p_value <- signif(summary(simplemodel)$coef[2, 4], 5) #same goes for the p-value
+r_squared <- signif(summary(simplemodel)$r.squared, 5) #same goes for R^2 value 
+
+# next, we create a dataframe to store our outputs of interest
+model_summary <- data.frame(
+  Parameter = c("Slope", "P-value", "R-squared"),
+  Value = c(slope, p_value, r_squared)
+)
+
+#finally, we use the knitr package to make the outputted table more attractive 
+kable(model_summary, caption = "Simple Linear Regression Analysis Summary Table")
+```
+
+From this output table of my simple linear model, we can see that Beak Depth increased by 0.6685400 between 1976 and 1978.
+
+Our H~0~ assumes that there is no change in Beak Depth from 1976 to 1978. We would fail to reject H~0~ if the inbuilt t-test, which compares Beak Depths between the two years and derives a t-statistic with an associated p-value, was non-significant. However, our t-test returns a highly significant associated p-value of 0.0000086. This is much lower than the traditional alpha threshold of 0.05. As such, we reject H~0~.
+
+Notably however, the R^2^ output of this linear regression analysis = 0.1066300. This means that the Year can explain only 10.7% of the variability in Beak Depth. This implies that other factors; be they physiological, ecological, environmental or genetic, are affecting the change in beak depth, too.
+
+To more easily interpret of these findings, I built them into a [simple linear regression analysis]{.underline} plot.
+
+```{r}
+#| echo: true
+#| warning: false
+#| message: false
+#| label: regression
+#| fig-cap: "Linear Regression Analysis of my Simple Linear Model. The x-axis represents Year, and the y-axis represents Beak Depth (mm). The linear regression is shown in purple, with 95% CIs shown in grey. Slope and p-value are cited in the top right hand corner."
+finchData$Year <- as.numeric(finchData$Year) #for linear regression, we must now treat "year" as numerical 
+ggplot(finchData, aes(x = Year, y = Depth)) + 
+  geom_point() + #generates a scatter plot
+  geom_smooth(method = "lm", se = TRUE, color = "purple") +  #adding the linear regression with standard errors to the scatter plot
+  labs(title = "(Fig 2) | Simple Linear Model of Medium Ground Finch Beak Depth Before + After Drought",
+       x = "Year",
+       y = "Beak Depth (mm)"
+       ) +
+  scale_x_continuous(breaks = c(1, 2), labels = c("1976", "1978")) + #defining and labelling the x-values is now necessary, since "year" is being treated as numerical 
+  annotate("text", x = 1.7, y = max(finchData$Depth) + 0.25,
+           label = paste("\nSlope = ", slope,
+                         "\nP-value = ", p_value), #pasting the most appropriate analysis outputs onto the graph, for ease of perception
+           size = 4, hjust = 0, vjust = 0.75) + 
+  theme_minimal() + #another useful palette for publication-quality figures 
+  theme(plot.title = element_text(face = "bold", size = 12, hjust = 0.5)) #adjusting for aesthetics of the title 
+```
+
+Notably, the confidence intervals (the range for which the Depth estimate meets the "true" Depth value, with 95% confidence) do not overlap. Taken together, the highly statistically significant increase in Beak Depth would indicate that the Medium ground finches have undergone natural selection. Hence, we reject H~0~. [@svensson2023]
+
+::: callout-important
+## Simple Linear Models make assumptions that must be verified.
+:::
+
+To verify that the Grant dataset validates the assumptions of a simple linear model, and concurrent regression analysis, I generated a multi-panel figure of regression diagnostics plots [@kassambara2018].
+
+```{r}
+#| echo: true
+#| warning: false
+#| message: false
+#| label: assumptions
+#| fig-cap: "A multi-panel figure testing the assumptions of linear regression analysis, with regards to this dataset. The top-left plot shows the Residuals vs Fitted. The top-right plot shows the Normal Q-Q plot. The bottom-left plot shows the Scale-Location plot. The bottom-right plot shows the Residuals vs Leverage plot."
+par(mfrow=c(2,2)) 
+plot(simplemodel)
+```
+
+The top-left plot analyses the Residuals vs the Fitted data. This shows the fitted values (meaning the predicted values under the model) on the x-axis, against the residuals (meaning the difference between the predicted and observed values) on the y-axis. This plot is used to verify that the dataset validates the assumptions of a linear relationship between variables: which is shown by a horizontal line about zero. Here, the red line is horizontal about zero, which demonstrates that there is constantly very little difference between predicted and observed values under the model. As such, this assumption is validated.
+
+The top-right plot shows the Normal Q-Q plot. This shows theoretical quantiles (taken from the normal distribution) on the x-axis, and the standardised residuals (specifically, normalised residuals) of the dataset on the y-axis. It is used to validate the assumption of normal distribution of residuals: which is demonstrated by all the residuals (shown by the circles) aligning to the diagonal dashed line; showing that the actual residuals align with the theoretically normal values. Here, the circles align nicely with the dashed line, thus validating this assumption.
+
+The bottom-left plot shows the Scale-Location plot. This also shows the fitted values on the x-axis, but here against the square root of the standard residuals (for better interpretability) on the y-axis. It is used to validate the assumption of homoscedasticity, or homogeneity of variance: which is indicated by a horizontal line. Here, we do see a horizontal line, showing that there is little deviation in the residuals against the fitted values. This therefore validates this assumption.
+
+Finally, the bottom-right plot shows the Constant Leverage plot. This shows the factor level combinations (here, simply the "Year", as there is only one factor) on the x-axis, and the standardised residuals on the y-axis. It is used to validate the assumption that the linear model appropriately accounts for the contribution of the Year factor to the Beak Depth result. Here, our red line shows no noticeable curvature and does not deviate significantly from zero; the residuals do not significantly deviate within the factor. This therefore validates this assumption.
+
+[@kassambara2018]
+
+# Conclusion
+
+To conclude, the Grant dataset provides an important opportunity for the study of evolution, by the mechanism of natural selection.
+
+Simple regression analysis reveals that medium ground finches (*Geospiza fortis*) of Daphne Major (Galapagos) experience increased beak depth in response to food availability, due to drought. Despite linear regression only showing a correlation, and not providing conclusive proof of causation, we have strong statistical evidence to reject H~0~.
+
+This is important because it hints at the selective forces which can enforce evolutionary change: here, drought. It is essential to consider both the potential incidence, and the nature, of the evolutionary effects that anthropogenic environmental changes (such as more frequent droughts) might impose upon species in our current (proposed) Anthropocene.
+
+Further studies elucidating the genomics that underpin such evolutionary changes, such as that conducted by [@sangeet2016] are promising. Discovering the linked loci that have undergone natural selection, producing adaptive phenotypes (such as the *HMGA2* gene in this case), will facilitate greater understanding of the proximate and ultimate causes of evolution by natural selection. Only with the appropriate foresight to predict these changes, facilitated by research efforts such as the Grants', can we ensure species conservation.
