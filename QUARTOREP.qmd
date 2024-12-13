@@ -1,6 +1,7 @@
 ---
 title: "Dynamic and Reproducible Science in Quarto"
 format: html
+embed-resources: true
 editor: visual
 fig-width: 10
 fig-height: 9.35
