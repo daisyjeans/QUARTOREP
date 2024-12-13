@@ -7,3 +7,7 @@ This file contains data on: The Grant dataset includes more than 20 generations 
 Important files include: 
 
 QUARTOREP.qmd = my Quarto file 
+figures = saved figures (both exploratory and results)
+functions = saved function (for saving figures)
+renv = storing the appropriate library versions I used
+images = an image of a medium ground finch perching
