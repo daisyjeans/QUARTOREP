@@ -222,6 +222,7 @@ resultsfigure <- ggplot(finchData, aes(x = Year, y = Depth)) +
            size = 4, hjust = 0, vjust = 0.75) + 
   theme_minimal() + #another useful palette for publication-quality figures 
   theme(plot.title = element_text(face = "bold", size = 12, hjust = 0.5)) #adjusting for aesthetics of the title 
+resultsfigure
 ```
 
 Notably, the confidence intervals (the range for which the Depth estimate meets the "true" Depth value, with 95% confidence) do not overlap. Taken together, the highly statistically significant increase in Beak Depth would indicate that the Medium ground finches have undergone natural selection. Hence, we reject H~0~. [@svensson2023]
